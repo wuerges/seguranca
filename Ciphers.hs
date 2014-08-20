@@ -20,9 +20,15 @@ d_transpose k bs = c_transpose k' bs
     where k' = ceiling $ fromIntegral (B.length bs) / fromIntegral k
 
 
+pad_multiple :: Int -> B.ByteString -> B.ByteString
+pad_multiple n bs = B.concat [bs, spaces (n - (B.length bs `mod` n))]
+
+spaces :: Int -> B.ByteString
+spaces n  = U.pack (take n $ repeat ' ')
+
 split_equals :: Int -> B.ByteString -> [B.ByteString]
 split_equals n bs = 
-    if B.length bs <= n then [B.take n (bs ++ bs)]
+    if B.length bs <= n then [bs]
                         else [B.take n bs] ++ split_equals n (B.drop n bs)
 
 
