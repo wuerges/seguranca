@@ -14,5 +14,5 @@ encode c k input output =
     do hInput <- H.openFile input H.ReadMode 
        hOutput <- H.openFile output H.WriteMode 
        hEncode c k hInput hOutput
-       hClose hInput
-       hClose hOutput
+       H.hClose hInput
+       H.hClose hOutput

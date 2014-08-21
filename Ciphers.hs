@@ -63,7 +63,3 @@ bruteforce [] decipher cleartext ciphertext = Nothing
 bruteforce (k:ks) decipher cleartext ciphertext = 
     if decipher k ciphertext == cleartext then Just k
                                           else bruteforce ks decipher cleartext ciphertext
-        
-
-
-
