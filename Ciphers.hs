@@ -1,3 +1,5 @@
+module Ciphers where
+
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as U
 import qualified Modular as M
