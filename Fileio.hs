@@ -3,6 +3,7 @@ import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as U
 import qualified System.IO as H
 import System.Random
+import System.Environment
 
 randomize :: B.ByteString -> IO B.ByteString
 randomize bs = do rs <- mapM (\x -> randomIO) [0..(B.length bs)]
@@ -44,3 +45,11 @@ encodeL c k input output =
        hEncodeL c k hInput hOutput
        H.hClose hInput
        H.hClose hOutput
+
+
+main = do [cipher, mode, key, input, output] <- getArgs
+          case (cipher, mode) of 
+            ("ceasar", "code") -> encode C.c_ceasar (read key) input output
+            ("ceasar", "decode") -> encode C.d_ceasar (read key) input output
+            ("transposition", "code") -> encode C.c_transpose (read key) input output
+            ("transposition", "decode") -> encode C.d_transpose (read key) input output
