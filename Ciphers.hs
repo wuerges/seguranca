@@ -11,7 +11,7 @@ type Cipher a = a -> B.ByteString -> B.ByteString
 az = B.pack [0..255]
 
 ceasar1 :: Int -> Word8 -> Word8
-ceasar1 k w = fromIntegral $ M.msum 256 k (fromIntegral w)
+ceasar1 k w = M.msumInt 256 k w
 
 c_ceasar :: Cipher Int
 c_ceasar k t = B.map (ceasar1 k) t
@@ -19,6 +19,9 @@ c_ceasar k t = B.map (ceasar1 k) t
 d_ceasar :: Cipher Int
 d_ceasar k t = B.map (ceasar1 (k * (-1))) t
 
+c_vigenere :: Cipher B.ByteString
+c_vigenere k t = B.pack $ B.zipWith (\a b -> M.msumInt 256 a b) t k'
+    where k' = B.concat (repeat k) :: B.ByteString
 
 c_transpose :: Cipher Int
 c_transpose k bs = B.concat $ B.transpose $ split_equals k bs
