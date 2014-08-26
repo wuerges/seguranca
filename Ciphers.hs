@@ -17,11 +17,19 @@ c_ceasar :: Cipher Int
 c_ceasar k t = B.map (ceasar1 k) t
 
 d_ceasar :: Cipher Int
-d_ceasar k t = B.map (ceasar1 (k * (-1))) t
+d_ceasar k t = c_ceasar (-k) t
+
+-- | The 'c_vigenere' function performs the vigenere 
+-- cipher with a the key 'k' on a text 't'.
+i_vigenere :: (Word8 -> Word8) -> Cipher B.ByteString
+i_vigenere mod_k k t = B.pack $ B.zipWith (\a b -> M.msumInt 256 a (mod_k b)) t k'
+    where k' = B.concat (repeat k) :: B.ByteString
 
 c_vigenere :: Cipher B.ByteString
-c_vigenere k t = B.pack $ B.zipWith (\a b -> M.msumInt 256 a b) t k'
-    where k' = B.concat (repeat k) :: B.ByteString
+c_vigenere k t = i_vigenere id k t
+
+d_vigenere :: Cipher B.ByteString
+d_vigenere k t = i_vigenere negate k t
 
 c_transpose :: Cipher Int
 c_transpose k bs = B.concat $ B.transpose $ split_equals k bs

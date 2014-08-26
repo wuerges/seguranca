@@ -2,6 +2,18 @@ import qualified Ciphers as C
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as U
 import qualified System.IO as H
+import System.Random
+
+randomize :: B.ByteString -> IO B.ByteString
+randomize bs = do rs <- mapM (\x -> randomIO) [0..(B.length bs)]
+                  return $ B.pack $ randomize_ rs (B.unpack bs)
+
+randomize_ :: [Int] -> [a] -> [a]
+randomize_ _ [] = []
+randomize_ (n:ns) xs = l : randomize_ ns (fs ++ ls)
+    where n' = n `mod` length xs
+          (fs, l:ls) = splitAt n' xs 
+
 
 
 hEncode :: C.Cipher a -> a -> H.Handle -> H.Handle -> IO ()
