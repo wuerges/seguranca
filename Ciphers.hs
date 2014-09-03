@@ -4,6 +4,7 @@ import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as U
 import qualified Modular as M
 import qualified Data.Map as Map
+import Debug.Trace
 import Data.Word
 
 type Cipher a = a -> B.ByteString -> B.ByteString
@@ -38,8 +39,6 @@ d_transpose :: Cipher Int
 d_transpose k bs = c_transpose k' bs
     where k' = ceiling $ fromIntegral (B.length bs) / fromIntegral k
 
-
-
 build_subsfunction :: B.ByteString -> B.ByteString -> Word8 -> Word8
 build_subsfunction ks vs  = f
     where f c = Map.findWithDefault 0 c m
@@ -50,8 +49,6 @@ c_substitution k bs = B.map (build_subsfunction k az) bs
 
 d_substitution :: Cipher B.ByteString
 d_substitution k bs = B.map (build_subsfunction az k) bs
-
-
 
 pad_multiple :: Int -> B.ByteString -> B.ByteString
 pad_multiple n bs = B.concat [bs, spaces (n - (B.length bs `mod` n))]
@@ -67,10 +64,10 @@ spaces n  = U.pack (take n $ repeat ' ')
 --       (y1, y2) = splitAt n xs
 
 split_equals :: Int -> B.ByteString -> [B.ByteString]
-split_equals n bs = 
-    if B.length bs <= n then [bs]
-                        else [B.take n bs] ++ split_equals n (B.drop n bs)
-
+split_equals n bs = if B.null bs then []
+                                 else y1 : split_equals n y2
+    where
+        (y1, y2) = B.splitAt n bs
 
 test_cipher c d k cleartext = d k ciphertext == cleartext
     where ciphertext = c k cleartext
@@ -79,7 +76,8 @@ test_cipher c d k cleartext = d k ciphertext == cleartext
 bruteforceF :: [a] -> (Cipher a) -> B.ByteString -> (B.ByteString -> [B.ByteString]) -> [(a, [B.ByteString])]
 bruteforceF [] decipher ciphertext f = []
 bruteforceF (k:ks) decipher ciphertext f = 
-    (k, f (decipher k ciphertext)): bruteforceF ks decipher ciphertext f
+    (k, f cand): bruteforceF ks decipher ciphertext f
+        where cand = decipher k ciphertext
 
 bruteforce :: [a] -> (Cipher a) -> B.ByteString -> B.ByteString -> Maybe a
 bruteforce [] decipher cleartext ciphertext = Nothing
