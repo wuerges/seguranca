@@ -59,6 +59,13 @@ pad_multiple n bs = B.concat [bs, spaces (n - (B.length bs `mod` n))]
 spaces :: Int -> B.ByteString
 spaces n  = U.pack (take n $ repeat ' ')
 
+-- | split at regular intervals
+-- chunk :: Int -> [a] -> [[a]]
+-- chunk _ [] = []
+-- chunk n xs = y1 : chunk n y2
+--   where
+--       (y1, y2) = splitAt n xs
+
 split_equals :: Int -> B.ByteString -> [B.ByteString]
 split_equals n bs = 
     if B.length bs <= n then [bs]
@@ -68,6 +75,11 @@ split_equals n bs =
 test_cipher c d k cleartext = d k ciphertext == cleartext
     where ciphertext = c k cleartext
     
+
+bruteforceF :: [a] -> (Cipher a) -> B.ByteString -> (B.ByteString -> [B.ByteString]) -> [(a, [B.ByteString])]
+bruteforceF [] decipher ciphertext f = []
+bruteforceF (k:ks) decipher ciphertext f = 
+    (k, f (decipher k ciphertext)): bruteforceF ks decipher ciphertext f
 
 bruteforce :: [a] -> (Cipher a) -> B.ByteString -> B.ByteString -> Maybe a
 bruteforce [] decipher cleartext ciphertext = Nothing
