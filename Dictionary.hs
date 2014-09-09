@@ -51,7 +51,10 @@ bruteforceLanguageFile dict test decipher ks = do
 
 
 main = do
-    (f1:f2:args) <- getArgs
-    rs <- bruteforceLanguageFile f1 f2 d_transpose [1..100] 
+    (c:f1:f2:args) <- getArgs
+    let dec = case c of 
+                "transpose" -> d_transpose
+                "ceasar" -> d_ceasar
+    rs <- bruteforceLanguageFile f1 f2 dec [1..100] 
     putStrLn $ "resultado" ++ show rs
 
