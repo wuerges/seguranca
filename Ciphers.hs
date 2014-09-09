@@ -32,8 +32,11 @@ c_vigenere k t = i_vigenere id k t
 d_vigenere :: Cipher B.ByteString
 d_vigenere k t = i_vigenere negate k t
 
+extend_mul :: Int -> B.ByteString -> B.ByteString
+extend_mul k bs = B.append bs (U.pack $ take (k - 1) (repeat ' '))
+
 c_transpose :: Cipher Int
-c_transpose k bs = B.concat $ B.transpose $ split_equals k bs
+c_transpose k bs = B.concat $ B.transpose $ split_equals k (extend_mul 5 bs)
 
 d_transpose :: Cipher Int
 d_transpose k bs = c_transpose k' bs
