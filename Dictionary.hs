@@ -1,7 +1,8 @@
+module Dictionary where
+
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as C
 import qualified System.IO as H
-import System.Environment
 import qualified Data.Set as S
 import Ciphers
 
@@ -48,13 +49,4 @@ bruteforceLanguageFile dict test decipher ks = do
     bs <- getBSFile test
     let results = bruteforceF ks decipher bs (detectLanguageImprov d)
     return $ [(k, bss) | (k, bss) <- results, length bss > 3]
-
-
-main = do
-    (c:f1:f2:args) <- getArgs
-    let dec = case c of 
-                "transpose" -> d_transpose
-                "ceasar" -> d_ceasar
-    rs <- bruteforceLanguageFile f1 f2 dec [1..100] 
-    putStrLn $ "resultado" ++ show rs
 
