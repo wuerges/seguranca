@@ -5,6 +5,7 @@ import qualified Data.ByteString.Char8 as C
 import qualified System.IO as H
 import qualified Data.Set as S
 import Ciphers
+import Fileio
 
 type Dict = S.Set B.ByteString
 
@@ -30,12 +31,6 @@ detectLanguageImprov :: Dict -> B.ByteString -> [B.ByteString]
 detectLanguageImprov d bs = dt [] d (dwords bs)
     where dt fs d (w:ws) = if S.member w d then dt (w:fs) d ws else dt fs d ws
           dt fs d [] = fs
-
-getBSFile f = do
-    hInput <- H.openFile f H.ReadMode
-    text <- B.hGetContents hInput
-    H.hClose hInput
-    return text
 
 detectLanguageFile :: H.FilePath -> H.FilePath -> IO (Maybe B.ByteString)
 detectLanguageFile dict test = do
