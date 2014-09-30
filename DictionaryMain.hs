@@ -7,6 +7,6 @@ main = do
     let dec = case c of 
                 "transpose" -> d_transpose
                 "ceasar" -> d_ceasar
-    rs <- bruteforceLanguageFile f1 f2 dec [1..100] 
+    rs <- bruteforceLanguageFile f1 f2 dec [1..256] 
     putStrLn $ "resultado" ++ show rs
 
